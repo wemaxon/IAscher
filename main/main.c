@@ -12,6 +12,7 @@
 
 #include "led.h"
 #include "iot_servo.h"
+#include "imu/imu.h"
 
 
 #define SERVO1_PIN           20
@@ -90,7 +91,8 @@ static void servoInit(){
 void app_main(void){
     ESP_LOGI(TAG, "Starting Aschenbecher");
 
-    i2c_scanner();
+    // i2c_scanner();
+    imuInit();
 
     ledInit();
     servoInit();

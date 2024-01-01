@@ -7,6 +7,7 @@
   "idf.portWin": "COM11",
   "idf.flashType": "UART",
   "files.associations": {
-    "gpio.h": "c"
+    "gpio.h": "c",
+    "i2c_interface.h": "c"
   }
 }
