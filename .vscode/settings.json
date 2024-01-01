@@ -5,5 +5,8 @@
     "board/esp32c3-bridge.cfg"
   ],
   "idf.portWin": "COM11",
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "files.associations": {
+    "gpio.h": "c"
+  }
 }
