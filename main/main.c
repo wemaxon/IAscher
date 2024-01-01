@@ -108,6 +108,7 @@ void app_main(void){
         ledStatusSet(0);
         iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90.0);
         iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90.0);
+        imuDumpData();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }

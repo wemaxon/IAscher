@@ -8,6 +8,7 @@
   "idf.flashType": "UART",
   "files.associations": {
     "gpio.h": "c",
-    "i2c_interface.h": "c"
+    "i2c_interface.h": "c",
+    "esp_err.h": "c"
   }
 }

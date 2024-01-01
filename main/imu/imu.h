@@ -5,6 +5,6 @@
 
 
 esp_err_t imuInit(void);
-
+esp_err_t imuDumpData(void);
 
 #endif /* _IMU_H_ */
