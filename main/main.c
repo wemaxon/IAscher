@@ -8,6 +8,7 @@
 #include "freertos/task.h"
 
 #include "esp_log.h"
+#include "driver/i2c.h"
 
 #include "led.h"
 #include "iot_servo.h"
@@ -16,9 +17,51 @@
 #define SERVO1_PIN           20
 #define SERVO2_PIN           21
 
+#define I2C_MASTER_SCL_IO    3    // Define the SCL pin
+#define I2C_MASTER_SDA_IO    2    // Define the SDA pin
+#define I2C_MASTER_NUM       I2C_NUM_0  // I2C port number
+#define I2C_MASTER_FREQ_HZ   100000    // I2C master clock frequency
+#define I2C_MASTER_TX_BUF_LEN 0        // I2C master tx buffer length
+#define I2C_MASTER_RX_BUF_LEN 0        // I2C master rx buffer length
+
 
 static const char* TAG = "main";
 
+
+static void i2c_scanner() {
+    int i;
+    esp_err_t ret;
+    i2c_config_t conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = I2C_MASTER_SDA_IO,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_io_num = I2C_MASTER_SCL_IO,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master.clk_speed = I2C_MASTER_FREQ_HZ,
+    };
+    
+    i2c_param_config(I2C_MASTER_NUM, &conf);
+    i2c_driver_install(I2C_MASTER_NUM, conf.mode,
+                       I2C_MASTER_RX_BUF_LEN,
+                       I2C_MASTER_TX_BUF_LEN, 0);
+    
+    printf("Scanning I2C bus...\n");
+    for (i = 0; i < 128; i++) {
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+        i2c_master_start(cmd);
+        i2c_master_write_byte(cmd, (i << 1) | I2C_MASTER_WRITE, 1);
+        i2c_master_stop(cmd);
+
+        ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 10 / portTICK_PERIOD_MS);
+        if (ret == ESP_OK) {
+            printf("Found device at address 0x%X\n", i);
+        }
+        
+        i2c_cmd_link_delete(cmd);
+    }
+
+    i2c_driver_delete(I2C_MASTER_NUM);
+}
 
 static void servoInit(){
     servo_config_t servo_cfg = {
@@ -46,6 +89,8 @@ static void servoInit(){
 
 void app_main(void){
     ESP_LOGI(TAG, "Starting Aschenbecher");
+
+    i2c_scanner();
 
     ledInit();
     servoInit();
