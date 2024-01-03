@@ -3,8 +3,12 @@
 
 #include "esp_err.h"
 
+typedef struct attitude{
+    float roll;
+    float pitch;
+    float yaw;
+} attitude_t;
 
 esp_err_t imuInit(void);
-esp_err_t imuDumpData(void);
 
 #endif /* _IMU_H_ */

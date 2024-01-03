@@ -1,19 +1,53 @@
 #include "imu.h"
 
+#include <math.h>
+
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "bmi160.h"
 #include "i2c_interface.h"
 
 
-#define BMI160_SHUTTLE_ID     0x38
-#define BMI160_DEV_ADDR       0x69
+#define BMI160_SHUTTLE_ID           0x38
+#define BMI160_DEV_ADDR             0x69
+#define IMU_SAMPLE_INTERVAL_MS      1000
+#define G_MPS2                      9.81f
+#define RAD_TO_DEG                  57.2957795131f
+
 
 static const char* TAG = "imu";
 struct bmi160_dev bmi160dev;
-struct bmi160_sensor_data bmi160_accel;
-struct bmi160_sensor_data bmi160_gyro;
+struct bmi160_sensor_data bmi160_accel, bmi160_gyro;
 
+
+static attitude_t estimateAttitude(struct bmi160_sensor_data acc, struct bmi160_sensor_data gyro){
+    ESP_LOGI(TAG,"ax:%d\tay:%d\taz:%d", acc.x, acc.y, acc.z);
+    ESP_LOGI(TAG,"gx:%d\tgy:%d\tgz:%d", gyro.x, gyro.y, gyro.z);
+    
+    attitude_t attitude;
+
+    /* get accelerometer measurements */
+    float ax_mps2 = acc.x * 1.0;
+    float ay_mps2 = acc.y * 1.0;
+    float az_mps2 = acc.z * 1.0;
+    
+    /* estimate angles using accelerometer measurements */
+    attitude.pitch = atanf(ay_mps2 / az_mps2);
+    attitude.roll = asinf(ax_mps2 / sqrtf((ay_mps2 * ay_mps2) + (az_mps2 * az_mps2)));
+
+    return attitude;
+}
+
+static void imuTask(void* pvParameters){
+    while(1){
+        bmi160_get_sensor_data((BMI160_ACCEL_SEL | BMI160_GYRO_SEL), &bmi160_accel, &bmi160_gyro, &bmi160dev);
+        attitude_t attitude = estimateAttitude(bmi160_accel, bmi160_gyro);
+        ESP_LOGI(TAG,"pitch: %f, roll: %f", attitude.pitch, attitude.roll);
+        vTaskDelay(pdMS_TO_TICKS(IMU_SAMPLE_INTERVAL_MS));
+    }
+}
 
 esp_err_t imuInit(void){
 
@@ -63,12 +97,7 @@ esp_err_t imuInit(void){
         return ESP_FAIL;
     }
 
-    return ESP_OK;
-}
+    xTaskCreate(imuTask, "estimator", 4096, NULL, 5, NULL);
 
-esp_err_t imuDumpData(void){
-    bmi160_get_sensor_data((BMI160_ACCEL_SEL | BMI160_GYRO_SEL), &bmi160_accel, &bmi160_gyro, &bmi160dev);
-    ESP_LOGI(TAG,"ax:%d\tay:%d\taz:%d", bmi160_accel.x, bmi160_accel.y, bmi160_accel.z);
-    ESP_LOGI(TAG,"gx:%d\tgy:%d\tgz:%d", bmi160_gyro.x, bmi160_gyro.y, bmi160_gyro.z);
     return ESP_OK;
 }
