@@ -15,8 +15,8 @@
 #include "imu/imu.h"
 
 
-#define SERVO1_PIN           20
-#define SERVO2_PIN           21
+#define SERVO1_PIN           21
+#define SERVO2_PIN           20
 
 #define I2C_MASTER_SCL_IO    3    // Define the SCL pin
 #define I2C_MASTER_SDA_IO    2    // Define the SDA pin
@@ -32,8 +32,8 @@ static const char* TAG = "main";
 static void servoInit(){
     servo_config_t servo_cfg = {
         .max_angle = 180,
-        .min_width_us = 1000,
-        .max_width_us = 2000,
+        .min_width_us = 500,
+        .max_width_us = 2500,
         .freq = 50,
         .timer_number = LEDC_TIMER_0,
         .channels = {
@@ -55,19 +55,16 @@ static void servoInit(){
 void app_main(void){
     ESP_LOGI(TAG, "Starting Aschenbecher");
 
-    imuInit();
-    ledInit();
     servoInit();
+    ledInit();
+    imuInit();
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 15.0);
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 15.0);
 
     while(1){
         ledStatusSet(1);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 0.0);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 0.0);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-
+        vTaskDelay(pdMS_TO_TICKS(5000));
         ledStatusSet(0);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90.0);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90.0);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(5000));
     }
 }
