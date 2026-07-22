@@ -57,9 +57,11 @@ void app_main(void){
 
     servoInit();
     ledInit();
-    imuInit();
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 15.0);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 15.0);
+    if (imuInit() != ESP_OK) {
+        ESP_LOGE(TAG, "IMU initialization failed");
+    }
 
     while(1){
         ledStatusSet(1);

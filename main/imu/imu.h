@@ -2,12 +2,7 @@
 #define _IMU_H_
 
 #include "esp_err.h"
-
-typedef struct attitude{
-    float roll;
-    float pitch;
-    float yaw;
-} attitude_t;
+#include "attitude_filter.h"
 
 esp_err_t imuInit(void);
 
