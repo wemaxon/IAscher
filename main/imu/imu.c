@@ -17,7 +17,7 @@
 #include "attitude_filter.h"
 #include "bmi160.h"
 #include "i2c_interface.h"
-
+#include "led.h"
 #include "../iot_servo.h"
 
 #define BMI160_DEV_ADDR              0x69
@@ -40,9 +40,10 @@
 
 #define VISOR_OPEN_THRESHOLD_RAD     0.25f
 #define VISOR_CLOSE_THRESHOLD_RAD    0.18f
-#define VISOR_CLOSED_ANGLE_DEG       0.0f
-#define VISOR_LEFT_OPEN_ANGLE_DEG    79.0f
-#define VISOR_RIGHT_OPEN_ANGLE_DEG   81.0f
+#define VISOR_LEFT_CLOSED_ANGLE_DEG  50.0f
+#define VISOR_RIGHT_CLOSED_ANGLE_DEG 55.0f
+#define VISOR_LEFT_OPEN_ANGLE_DEG    102.5f
+#define VISOR_RIGHT_OPEN_ANGLE_DEG   112.5f
 
 typedef struct {
     attitude_t attitude;
@@ -84,12 +85,14 @@ static int64_t expandTimestamp(uint32_t timestamp_low, int64_t now_us)
 
 static esp_err_t setVisorOpen(bool open)
 {
+    ledStatusSet(open ? 1 : 0);
+
     const float left_angle = open
                                  ? VISOR_LEFT_OPEN_ANGLE_DEG
-                                 : VISOR_CLOSED_ANGLE_DEG;
+                                 : VISOR_LEFT_CLOSED_ANGLE_DEG;
     const float right_angle = open
                                   ? VISOR_RIGHT_OPEN_ANGLE_DEG
-                                  : VISOR_CLOSED_ANGLE_DEG;
+                                  : VISOR_RIGHT_CLOSED_ANGLE_DEG;
     const esp_err_t left_result = iot_servo_write_angle(
         LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, left_angle);
     const esp_err_t right_result = iot_servo_write_angle(

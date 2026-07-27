@@ -55,10 +55,5 @@ void app_main(void){
         ESP_LOGE(TAG, "IMU initialization failed");
     }
 
-    while(1){
-        ledStatusSet(1);
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        ledStatusSet(0);
-        vTaskDelay(pdMS_TO_TICKS(5000));
-    }
+    vTaskDelete(NULL);
 }
