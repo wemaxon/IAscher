@@ -1,9 +1,8 @@
-#ifndef _IMU_H_
-#define _IMU_H_
+#ifndef ASHLESS_IMU_H
+#define ASHLESS_IMU_H
 
 #include "esp_err.h"
-#include "attitude_filter.h"
 
 esp_err_t imuInit(void);
 
-#endif /* _IMU_H_ */
+#endif /* ASHLESS_IMU_H */

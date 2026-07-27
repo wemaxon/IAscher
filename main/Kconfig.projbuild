@@ -1,0 +1,31 @@
+menu "Ashless visor hardware"
+
+config ASHLESS_I2C_SDA_GPIO
+    int "BMI160 I2C SDA GPIO"
+    range 0 21
+    default 2
+
+config ASHLESS_I2C_SCL_GPIO
+    int "BMI160 I2C SCL GPIO"
+    range 0 21
+    default 3
+
+config ASHLESS_I2C_CLOCK_HZ
+    int "BMI160 I2C clock frequency"
+    range 100000 400000
+    default 400000
+    help
+        Fast-mode 400 kHz is the low-latency default. It requires external
+        pull-up resistors sized for the bus capacitance; the ESP32-C3 internal
+        pull-ups alone are not sufficient for signal-integrity compliance.
+
+config ASHLESS_BMI160_INT1_GPIO
+    int "GPIO connected to BMI160 INT1"
+    range 0 21
+    default 4
+    help
+        Connect the BMI160 INT1 pin directly to this ESP32-C3 GPIO. The
+        firmware configures INT1 as an active-high push-pull data-ready output
+        and samples synchronized accelerometer/gyroscope data at 400 Hz.
+
+endmenu

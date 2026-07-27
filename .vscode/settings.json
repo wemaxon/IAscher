@@ -4,7 +4,7 @@
   "idf.openOcdConfigs": [
     "board/esp32c3-bridge.cfg"
   ],
-  "idf.portWin": "COM11",
+  "idf.portWin": "COM3",
   "idf.flashType": "UART",
   "files.associations": {
     "gpio.h": "c",

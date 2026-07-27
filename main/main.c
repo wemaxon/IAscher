@@ -8,7 +8,6 @@
 #include "freertos/task.h"
 
 #include "esp_log.h"
-#include "driver/i2c.h"
 
 #include "led.h"
 #include "iot_servo.h"
@@ -17,13 +16,6 @@
 
 #define SERVO1_PIN           21
 #define SERVO2_PIN           20
-
-#define I2C_MASTER_SCL_IO    3    // Define the SCL pin
-#define I2C_MASTER_SDA_IO    2    // Define the SDA pin
-#define I2C_MASTER_NUM       I2C_NUM_0  // I2C port number
-#define I2C_MASTER_FREQ_HZ   100000    // I2C master clock frequency
-#define I2C_MASTER_TX_BUF_LEN 0        // I2C master tx buffer length
-#define I2C_MASTER_RX_BUF_LEN 0        // I2C master rx buffer length
 
 
 static const char* TAG = "main";
