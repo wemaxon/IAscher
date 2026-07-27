@@ -33,7 +33,7 @@
 
 #define VISOR_OPEN_THRESHOLD_RAD           0.25f
 #define VISOR_CLOSE_THRESHOLD_RAD          0.18f
-#define VISOR_CLOSED_ANGLE_DEG             15.0f
+#define VISOR_CLOSED_ANGLE_DEG             0.0f
 #define VISOR_LEFT_OPEN_ANGLE_DEG          79.0f
 #define VISOR_RIGHT_OPEN_ANGLE_DEG         81.0f
 
