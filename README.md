@@ -1,6 +1,8 @@
 # IAscher
 This repository contains firmware and 3d printable files for an orientation-aware automatic-closing ashtray. An ESP32C3 computes spatial orientation using Data from a Bosch BMI160 IMU and controls two Servos. The mechanical design is inspired by helmet visor mechanisms.
 
+![Mechanism](/docs/mechanism.gif)
+
 
 ## Mechanical Design
 #### Sectional View
